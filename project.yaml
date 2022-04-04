@@ -1,0 +1,37 @@
+specVersion: 0.2.0
+name: moonriver-subql-starter
+version: 1.0.0
+description: Farms subquery
+repository: ''
+schema:
+  file: ./schema.graphql
+network:
+  genesisHash: '0x401a1f9dca3da46f5c4091016c8a2f26dcea05865116b286f60f668207d1474b'
+  endpoint: wss://moonriver.api.onfinality.io/public-ws
+  dictionary: 'https://api.subquery.network/sq/subquery/moonriver-dictionary'
+  chaintypes:
+    file: "./types.yaml"
+dataSources:
+  - kind: substrate/Moonbeam
+    startBlock: 915890
+    processor:
+      file: './node_modules/@subql/contract-processors/dist/moonbeam.js'
+      options:
+        abi: solarDistributorV2
+        address: '0xA3Dce528195b8D15ea166C623DB197B2C3f8D127'
+    assets:
+      solarDistributorV2:
+        file: './abis/solarDistributorV2.json'
+    mapping:
+      file: './dist/index.js'
+      handlers:
+        - handler: handleDepositEvent
+          kind: substrate/MoonbeamEvent
+          filter:
+            topics:
+              - Deposit(address indexed user, uint256 indexed pid, uint256 amount)
+        - handler: handleWithdrawEvent
+          kind: substrate/MoonbeamEvent
+          filter:
+            topics:
+              - Withdraw(address indexed user, uint256 indexed pid, uint256 amount)
